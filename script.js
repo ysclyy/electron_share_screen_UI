@@ -2,6 +2,28 @@ const electron = require('electron')
 const ipcRenderer = electron.ipcRenderer
 const desktopCapturer = electron.desktopCapturer
 
+var screens = document.getElementById('agora-screen');
+var windows = document.getElementById('agora-window');
+
+var screenSelect = document.getElementById('screen-select');
+var windowSelect = document.getElementById('window-select');
+
+screenSelect.onclick = function() {
+  console.log('screenSelect')
+  screens.style.display = "flex";
+  windows.style.display = "none";
+  windowSelect.removeAttribute('class','focus');
+  screenSelect.setAttribute('class', 'focus');
+}
+
+windowSelect.onclick = function() {
+  console.log('windowSelect');
+  screens.style.display = "none";
+  windows.style.display = "flex";
+  screenSelect.removeAttribute('class','focus');
+  windowSelect.setAttribute('class', 'focus');
+}
+
 desktopCapturer.getSources({types: ['window', 'screen']}, (error, sources) => {
   if (error) throw error;
   try {
@@ -12,8 +34,6 @@ desktopCapturer.getSources({types: ['window', 'screen']}, (error, sources) => {
 })
 
 var selectSource = function(sources, onSuccess, onFailure) {
-  var screens = "";
-  var domBox = document.getElementById('agora-box');
 
   sources.map(function(source) {
     if(source.id) {
@@ -29,7 +49,7 @@ var selectSource = function(sources, onSuccess, onFailure) {
         '</div>' +
         '<span>'+source.name+'</span>' ;
 
-      domBox.appendChild(item);
+      ~source.id.indexOf('screen') ? screens.appendChild(item) : windows.appendChild(item)      
     }
   })
 }
